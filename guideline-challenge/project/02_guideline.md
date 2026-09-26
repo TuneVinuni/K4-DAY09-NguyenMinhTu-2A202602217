@@ -1,63 +1,97 @@
-# Annotation guideline — Drivable Area Segmentation
+# Annotation guideline — Phân vùng Drivable Area
 
 **Version:** v1
 
-## 1. Objective + scope
+## 1\. Objective \+ scope
 
-Phân vùng **drivable area** (vùng xe ego được phép và có thể chạy) bằng polygon trên ảnh dashcam BDD100K. Giúp hệ thống tự hành ADAS lập kế hoạch đường đi (path planning) an toàn.
-- **Trong scope (bắt buộc label):** Mặt đường nhựa/bê tông mà ego được đi. Bao gồm làn ego, các làn cùng chiều, và giao lộ phía trước.
-- **Ngoài scope (ignore):** Làn ngược chiều bên kia dải phân cách/vạch đôi; vỉa hè, bãi cỏ; làn đỗ xe đang có xe đỗ; shoulder ngoài vạch trắng; gore area (vạch gạch chéo); nóc/capo xe camera. Mặt đường cách chân polygon > 50px hoặc trên điểm tụ chân trời.
+* **Mục tiêu:** Phân vùng "drivable area" (vùng xe ego được phép và có thể chạy) trên ảnh dashcam. Dữ liệu này dùng để huấn luyện model segmentation cho module **path planning** của xe tự hành. Planner sẽ chỉ sinh quỹ đạo di chuyển an toàn bên trong vùng được vẽ.  
+* **Scope (Phạm vi):**  
+  * **Trong scope (Được phép đi):** Mặt đường trải nhựa hoặc bê tông mà xe ego được đi hợp pháp theo luật giao thông (bao gồm làn xe đang đi và các làn cùng chiều có thể chuyển sang).  
+  * **Ngoài scope (Không label hoặc Ignore):** Bất kỳ khu vực nào không thuộc phần đường ego được phép đi.  
+    * **Tuyệt đối không label (để trống hoàn toàn):** Các khu vực ngoài lề như vỉa hè, lề đường/shoulder, bãi cỏ.  
+    * **Bắt buộc dùng `ignore_region`:** Những vùng nằm *trên mặt đường* nhưng xe không được phép đi vào (ví dụ: làn ngược chiều, vùng gạch chéo gore area, làn đỗ xe dọc phố).  
+* **Nguyên tắc cốt lõi (Safety First):** Lỗi vẽ nhầm vùng ngoài scope thành vùng trong scope (False Positive) là lỗi **Critical** (rất nghiêm trọng) vì có thể khiến xe tự hành lao ra khỏi đường hoặc gây tai nạn. Thà bỏ sót còn hơn vẽ nhầm.
 
-## 2. Annotation unit
+## 2\. Annotation unit
 
-- **Image** độc lập tĩnh. Vẽ **Polygon** cho mỗi vùng mặt đường (region). 
+* **Đơn vị gán nhãn:** Khung ảnh tĩnh (Image frame).  
+* **Loại nhãn:** Vùng (Region / Polygon).  
+* Mỗi vùng không gian thoả mãn định nghĩa class (VD: làn xe đang đi, làn xe bên cạnh) được vẽ thành một polygon khép kín (instance) riêng biệt.
 
-## 3. Geometry rule
+## 3\. Geometry rule
 
-- **Drivable Area**: Dùng Polygon, vẽ bám theo mép vạch liền, mép vỉa hè hoặc mép tuyết.
-  - **Tolerance**: Ở nửa dưới ảnh, mỗi cạnh lệch **≤ 5 px** là đạt. Ở vùng xa gần điểm tụ chân trời, lệch ≤ 10 px.
-  - Cạnh đáy của polygon phải dừng mép ở mui xe/capo (không vẽ đè lên capo).
-- **Phần bị xe khác che khuất**: Phần mặt đường nằm DƯỚI gầm xe / LỐP xe của xe khác vẫn tính là drivable. Khuyến khích **Vẽ trùm qua luôn xe đang đè lên mặt đường** (không đục lỗ) để tiết kiệm thời gian.
+* **Công cụ:** Vẽ bằng **Polygon**.  
+* **Quy tắc đặt điểm (Tolerance):** Polygon phải bám sát mép vạch liền, mép vỉa hè, hoặc ranh giới mép tuyết.  
+  * Ở nửa dưới ảnh (gần xe ego): Độ lệch tối đa cho phép là **≤ 5 px**.  
+  * Ở vùng xa (gần điểm tụ/vanishing point): Độ lệch tối đa cho phép là **≤ 10 px**.  
+* **Cạnh đáy (Bottom edge):** Cạnh dưới cùng của polygon phải **dừng chính xác ở mép nắp capo** của xe ego. Tuyệt đối không vẽ trùm lên nắp capo.  
+* **Giới hạn xa:** Không vẽ mặt đường ở quá xa. Polygon phải dừng lại ở phía dưới điểm tụ (vanishing point), hoặc cách cạnh đáy của polygon tối đa khoảng 50 px chiều cao ảnh.
 
-## 4. Taxonomy
+## 4\. Taxonomy
 
-- **Class `drivable_direct` (Polygon)**: Làn đường mà xe ego đang chạy trực tiếp.
-- **Class `drivable_alternative` (Polygon)**: Các làn đường cùng chiều kế bên mà xe ego có thể chuyển làn sang.
-  - **Attribute `boundary_visibility`**: `clear` (thấy rõ mép) / `occluded` (bị xe khác che 1 phần) / `unknown` (tối/tuyết không rõ).
-- **Class `ignore_region` (Polygon)**: Dùng để khoanh các vùng cực kỳ dễ nhầm lẫn (như lề đất, làn đỗ xe, gore area gạch chéo). Việc khoanh `ignore_region` chứng minh annotator đã nhìn thấy và cố tình loại trừ nó.
-- **Class `escalate` (Tag)**: Gắn nhãn toàn khung hình khi gặp ca khó. Điền lý do vào attribute `reason`.
+Hệ thống phân loại gồm Class và Attribute như sau:
 
-Bảng đầy đủ ở `03_ontology_and_cvat_setup.md` — hai nơi phải khớp nhau.
+**A. Classes (Nhãn lớp):**
 
-## 5. Inclusion / exclusion
+* `drivable_direct`: Làn đường hiện tại mà xe ego đang trực tiếp chạy trên đó.  
+* `drivable_alternative`: Các làn đường cùng chiều kế bên mà xe có thể chuyển sang hợp pháp.  
+* `ignore_region`: Vùng nằm *trên mặt đường* nhưng **KHÔNG ĐƯỢC CHẠY** (VD: làn ngược chiều, gore area, làn đỗ xe). *Lưu ý: Không dùng class này để vẽ lề đường, vỉa hè hay bãi cỏ (những phần ngoài đường này phải để trống hoàn toàn).*
 
-- **Bắt buộc vẽ**: Tất cả mặt đường hợp lệ trong ảnh.
-- **Bắt buộc Ignore**: Không vẽ Polygon Drivable lên vỉa hè, lề cỏ, hoặc làn ngược chiều. Thay vào đó có thể đè `ignore_region` lên các phần nhạy cảm này.
+**B. Attributes (Thuộc tính) \- Áp dụng cho class drivable:**
 
-## 6. Visibility / occlusion
+* `boundary_visibility` (Mức độ nhìn rõ ranh giới đường):  
+  * `clear` (Mặc định): Ranh giới nhìn thấy rõ ràng.  
+  * `occluded`: Ranh giới bị che khuất bởi xe khác nhưng vẫn có thể suy luận được mép đường bên dưới/phía sau.  
+  * `unknown`: Không thể xác định được mép đường do điều kiện thời tiết (tuyết phủ, đêm tối, mưa mờ).
 
-- **Bị che một phần (Occluded)**: Vẽ trùm qua bánh xe/thân xe, và đánh dấu `boundary_visibility=occluded`.
-- **Trời tối / mưa lóa / tuyết phủ mép (Low confidence)**: Vẽ theo suy đoán tốt nhất của bạn nhưng PHẢI chọn `boundary_visibility=unknown`. 
+## 5\. Inclusion / exclusion
 
-## 7. Ambiguity / escalation
+* **Bắt buộc label (Drivable):**  
+  * Mặt đường trải nhựa/bê tông của làn xe ego đang đi.  
+  * Các làn xe cùng chiều kế bên (nếu không có vạch liền cấm chuyển làn).  
+  * Phần mặt đường thuộc giao lộ phía trước (ngã tư, ngã ba).  
+* **Bắt buộc Ignore (Dùng class `ignore_region` cho các phần TRÊN mặt đường):**  
+  * Làn ngược chiều (nằm bên kia vạch vàng đôi hoặc dải phân cách).  
+  * Làn đỗ xe (kể cả khi đang có xe đỗ hay trống).  
+  * Vùng gạch chéo (Gore area) ở các điểm tách/nhập làn cao tốc.  
+  * Phản chiếu của nội thất xe trên kính chắn gió.  
+* **Không label (Tuyệt đối để trống, KHÔNG dùng `ignore_region`):**  
+  * Vỉa hè, bãi cỏ.  
+  * Lề đường (Shoulder) nằm ngoài vạch trắng nét liền của đường cao tốc.
 
-- Gắn tag **`escalate`** cho ảnh nếu đường phủ tuyết trắng xóa hoặc tối đen đến mức không thể phân biệt được đâu là đường, đâu là lề.
-- Kèm theo lý do vào ô `reason` (Ví dụ: "Tuyết mù không thấy lề").
-- Khi đã dùng tag `escalate`, **KHÔNG** cần vẽ vùng Drivable cho khu vực tranh cãi đó nữa (Nghiêng về an toàn).
+## 6\. Visibility / occlusion
 
-## 8. Temporal rule
+* **Bị che khuất (Occlusion):** Phần mặt đường bị xe phía trước hoặc chướng ngại vật che khuất **vẫn được tính là drivable**. Annotator cần suy đoán và vẽ polygon xuyên qua gầm xe/đuôi xe để nối liền mặt đường, đồng thời set thuộc tính `boundary_visibility` \= `occluded`.  
+* **Bị mờ do thời tiết/ánh sáng:** Nếu mép đường bị tuyết che lấp, hoặc trời quá tối, mưa làm mờ nhưng vẫn áng chừng được vùng an toàn, vẽ polygon bám mép phần đường thấy được và set `boundary_visibility` \= `unknown`.
 
-Không áp dụng — task ảnh tĩnh.
+## 7\. Ambiguity / escalation
 
-## 9. Examples
+Khi gặp tình huống mơ hồ, không đủ bằng chứng bằng mắt thường để xác định ranh giới đường, áp dụng nguyên tắc an toàn: **Nghiêng về hướng không vẽ vùng đó là drivable**.
 
-| sample_id | Thấy gì | Expected output | Rule áp dụng |
-|---|---|---|---|
-| BDD01 | Đường cao tốc, làn ego đang chạy | Vẽ `drivable_direct` với `boundary_visibility=clear`. | Bám sát mép vạch liền. |
-| BDD04 | Làn đỗ xe có xe đỗ lề đường | Khoanh Polygon `ignore_region` bao lên vùng đỗ xe này. | Làn đỗ xe không được chạy vào (Tránh false positive). |
-| BDD24 | Tuyết phủ kín không rõ mép vỉa hè | Gắn tag `escalate` và ghi `reason`="Tuyết che lề". | Nếu không chắc chắn, không vẽ drivable area. |
+**Quy trình Escalation (Báo cáo ca khó trên CVAT):**
 
-## 10. Common mistakes
+1. Không vẽ phần đường đang bị nghi ngờ.  
+2. Gắn tag `escalate` cho frame đó trong giao diện CVAT.  
+3. Ghi rõ lý do thắc mắc vào attribute text `reason`.  
+4. Spec owner sẽ quyết định và cập nhật vào file `edge_case_cards.md`. Khi chưa có quyết định, mặc định coi vùng đó không được phép chạy.
 
-- **Vẽ lấn lên lề/vỉa hè hoặc gore area (Vạch gạch chéo)**: Lỗi **CRITICAL**. Xe sẽ đâm lên lề. Bắt buộc dùng `ignore_region` để che đi.
-- **Cố gắng đục lỗ (né) các xe trên đường**: Tốn rất nhiều thời gian vô ích. Hãy vẽ thẳng polygon xuyên qua bánh xe/dưới gầm xe.
+## 8\. Temporal rule
+
+* Không áp dụng — task ảnh tĩnh (Image task).
+
+## 9\. Examples
+
+| sample\_id | Thấy gì | Expected output | Rule áp dụng |
+| :---- | :---- | :---- | :---- |
+| (Edge Case) | Đường cao tốc có vùng gạch chéo (Gore area) chia tách nhánh rẽ. | Polygon `drivable_direct` chạy theo làn ego. Vẽ `ignore_region` bao trùm kín vùng gore area gạch chéo. | Vẽ nhầm xe vào gore area là `critical`. Bắt buộc dùng `ignore_region` cho vùng giống đường, nằm trên mặt đường nhưng cấm chạy. |
+| (Edge Case) | Lề đường (Shoulder) trải nhựa phẳng, không có rào chắn, nằm ngoài vạch trắng nét liền. | Dừng ranh giới `drivable` ở mép trong của vạch trắng liền. **Không label phần lề đường (để trống hoàn toàn, không vẽ `ignore_region`)**. | Vùng ngoài mép đường như Shoulder tuyệt đối không được đi, và không thuộc diện tính vào ignore. |
+| (Edge Case) | Xe tải to cồng kềnh chạy ngay phía trước, che khuất một phần lớn làn đường. | Vẽ polygon băng qua gầm xe/sau lưng xe tải để hoàn thiện mặt đường. Set `boundary_visibility` \= `occluded`. | Mặt đường bị xe khác che khuất vẫn tính là drivable. |
+| (Edge Case) | Nắp capo xe ego xuất hiện lớn ở mép dưới khung hình. | Cạnh đáy của polygon mặt đường phải dừng lại và bám chính xác theo viền trên của nắp capo xe. | Nắp capo ngoài scope. Lỗi vẽ đè lên capo làm nhiễu model. |
+| (Edge Case) | Đường phủ đầy tuyết trắng, hoàn toàn không thấy vạch kẻ đường hay ranh giới mép cỏ. | Đoán vùng an toàn dựa theo vết bánh xe đi trước. Set `boundary_visibility` \= `unknown`. Nếu quá mơ hồ không đoán được: gắn tag `escalate` \+ ghi `reason`. | Khi không xác định được mép do thời tiết, ưu tiên thu hẹp vùng an toàn, set `unknown` hoặc escalate. |
+
+## 10\. Common mistakes
+
+1. **\[CRITICAL\] Vẽ lấn sang vùng cấm:** Vẽ nhầm lề đường, làn đỗ xe, hoặc vỉa hè hạ thấp thành vùng Drivable. Hậu quả là xe tự hành lao ra khỏi làn. **Cách tránh:** Luôn tự hỏi "Xe ego có được đánh lái vào vùng này theo luật không?". Nếu không, hãy dùng `ignore_region` (đối với phần trên đường như làn đỗ) hoặc không vẽ gì (đối với phần ngoài đường như vỉa hè/lề đường).  
+2. **Vẽ gộp làn ngược chiều:** Vẽ polygon lấn sang bên kia vạch vàng kép hoặc dải phân cách. **Cách tránh:** Xác định rõ chiều di chuyển dựa vào màu vạch kẻ (vàng/trắng) hoặc hướng xe chạy và dùng `ignore_region` cho đường ngược chiều.  
+3. **Quên xử lý mép nắp capo:** Vẽ đè polygon lên nắp capo xe hoặc hình phản chiếu trên kính chắn gió. **Cách tránh:** Luôn zoom kỹ ở cạnh đáy ảnh và cắt polygon bám dọc theo đường viền capo.  
+4. **Vẽ mặt đường quá xa (Out of bounds):** Kéo polygon tít lên tận đường chân trời hoặc vượt qua điểm tụ (vanishing point). **Cách tránh:** Chỉ vẽ mặt đường thực sự cần thiết cho path planning (khoảng 50px từ đáy polygon hoặc tối đa đến điểm tụ).
