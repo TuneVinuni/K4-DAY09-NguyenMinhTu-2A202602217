@@ -1,0 +1,16 @@
+sample_id,decision_id,expected,severity,kind,peer_evidence,correct,note
+BDD05,d1,label=drivable_direct x1,major,decision,drivable_direct,1,Đúng theo gold decision và guideline
+BDD05,d2,geometry: polygon bao trùm mặt đường sau lưng xe phía trước không bị cắt rời,minor,geometry,drivable_direct,1,Đúng chuẩn geometry mặt đường không đè xe
+BDD10,d1,label=drivable_direct x1,major,decision,drivable_direct | ignore_region×2,1,Đúng theo gold decision và guideline
+BDD10,d2,label=drivable_alternative không trùm lên các xe đỗ sát lề phải,major,decision,drivable_direct | ignore_region×2,1,Đúng quy tắc làn đỗ xe vẽ ignore_region
+BDD15,d1,label=drivable_direct x1,major,decision,drivable_alternative×2 | drivable_direct,1,Đúng làn direct của xe ego
+BDD15,d2,label=drivable_alternative x2,major,decision,drivable_alternative×2 | drivable_direct,1,Đúng 2 làn alternative cùng chiều
+BDD15,d3,geometry: polygon dừng ở mép trong vạch sơn trắng phân làn không lấn vỉa hè,minor,geometry,drivable_alternative×2 | drivable_direct,1,Bám sát mép vạch không lấn vỉa hè
+BDD16,d1,label=drivable_direct x1,major,decision,drivable_direct,1,Đúng duy nhất 1 làn ego
+BDD16,d2,geometry: cạnh đáy polygon cắt sát viền nắp capo xe ego không đè lên xe,minor,geometry,drivable_direct,1,Cắt sát viền nắp capo ego
+BDD20,d1,label=drivable_direct phủ toàn bộ lòng đường xe ego đang chạy,major,decision,drivable_direct | ignore_region,1,Đúng làn direct và ignore_region
+BDD24,d1,label=drivable_direct không vẽ trùm lên các đống tuyết chất cao hai bên lề,critical,decision,drivable_direct,1,Tuân thủ tuyệt đối quy tắc an toàn tuyết
+BDD24,d2,geometry: polygon dừng lại tại mép chân đống tuyết và cắt sát viền nắp capo xe ego,critical,geometry,drivable_direct,1,Dừng chuẩn tại chân tuyết và capo
+BDD25,d1,label=drivable_direct x1,major,decision,drivable_alternative | drivable_direct,1,Đúng làn ego
+BDD25,d2,label=drivable_alternative x1 (chỉ làn trái),major,decision,drivable_alternative | drivable_direct,1,Đúng 1 alternative làn trái (tránh taxi phải)
+BDD25,d3,geometry: đáy polygon dừng tại mép trên nắp capo trắng và phân biệt vạch sơn thật với vệt bóng nước phản chiếu,minor,geometry,drivable_alternative | drivable_direct,0,Peer vẽ lấn nhẹ vào vệt phản chiếu bóng nước khi chạng vạng; cần làm rõ ở guideline v3

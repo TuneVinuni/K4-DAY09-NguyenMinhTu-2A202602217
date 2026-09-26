@@ -1,1 +1,2 @@
 time,asker,question,answered_how,guideline_change
+2026-09-26 16:10,peer_team02,BDD25 có vệt phản chiếu bóng nước đèn đường bên cạnh làn ego thì có vẽ drivable_alternative không?,Spec Lead giải thích: Không vẽ vì vệt nước gây lóa mờ vạch sơn và bên cạnh có xe taxi di chuyển sát không đủ điều kiện an toàn,Bổ sung lưu ý phân biệt bóng nước chạng vạng vào mục 6 và mục 9 của guideline v3

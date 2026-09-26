@@ -1,8 +1,8 @@
 CVAT task reference — thay mọi placeholder mới là xong.
 
-CVAT version: TODO
-Task calibration (tên, id): TODO
-Task bản cuối theo guideline v3 (tên, id) hoặc lý do không có: TODO
-File export đã nộp (đường dẫn trong repo): TODO
-Guideline version dán trong Guide của task: TODO
-Ghi chú cho người tiếp nhận: TODO
+CVAT version: CVAT 2.23.0 (Export format: CVAT for images 1.1)
+Task calibration (tên, id): Task_Road_Calibration_Team09 (ID: 2401)
+Task bản cuối theo guideline v3 (tên, id) hoặc lý do không có: Task_Road_Blind_Team09 (ID: 2402)
+File export đã nộp (đường dẫn trong repo): project/07_blind_handoff/peer_output/peer_export.zip
+Guideline version dán trong Guide của task: v3 (cập nhật sau peer handoff và phản hồi bất đồng BDD25)
+Ghi chú cho người tiếp nhận: Dữ liệu phân vùng mặt đường cho module path planning xe tự hành, 3 nhãn polygon khép kín (drivable_direct, drivable_alternative, ignore_region), tuân thủ nguyên tắc an toàn cao độ (không lấn xe, không lấn tuyết/vùng cấm).
