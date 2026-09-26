@@ -2,16 +2,19 @@
   {
     "name": "drivable_direct",
     "color": "#E53935",
-    "type": "polygon"
+    "type": "polygon",
+    "attributes": []
   },
   {
     "name": "drivable_alternative",
     "color": "#1E88E5",
-    "type": "polygon"
+    "type": "polygon",
+    "attributes": []
   },
   {
     "name": "ignore_region",
     "color": "#757575",
-    "type": "polygon"
+    "type": "polygon",
+    "attributes": []
   }
 ]
