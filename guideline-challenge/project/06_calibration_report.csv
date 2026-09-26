@@ -1,1 +1,5 @@
 sample_id,item,values_by_annotator,diagnosis,action,rule_change
+BDD17,drivable_alternative,"cuong=2, trung=2, tuyen=1, KhoiNguyen=0",data_ambiguity,revise_rule,Trời mưa mặt đường đọng nước phản chiếu: chỉ vẽ alternative khi nhìn thấy rõ vạch sơn đứt quãng hoặc luồng xe chạy phía trước.
+BDD22,ignore_region,"cuong=0, trung=2, tuyen=1, KhoiNguyen=1",guideline_gap,revise_rule,Quy định rõ lề đường cao tốc chạng vạng không vẽ ignore_region nếu đã nằm ngoài vạch trắng nét liền mà chỉ để trống.
+BDD03,drivable_alternative,"cuong=0, trung=1, tuyen=1, KhoiNguyen=0",guideline_gap,revise_rule,Bổ sung quy tắc tâm xe (Ego Anchor Rule) để phân biệt chính xác giữa direct và alternative dù có bóng râm che.
+BDD03,drivable_direct,"cuong=1, trung=1, tuyen=2, KhoiNguyen=1",execution_error,coaching,Nhắc nhở annotator chỉ vẽ đúng 1 polygon duy nhất liên tục cho làn direct xe đang chạy thay vì ngắt đôi.
