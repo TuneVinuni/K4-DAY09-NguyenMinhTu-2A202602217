@@ -1,1 +1,27 @@
 sample_id,split,tags,reason
+BDD01,example,normal,Đường cao tốc ban ngày dễ nhận diện
+BDD02,example,normal,Đường phố thoáng
+BDD03,example,normal,Đường có bóng râm nhẹ
+BDD04,example,normal,Đường phố có xe đỗ lề đường
+BDD05,example,normal,Đường cao tốc thẳng tắp
+BDD06,calibration,normal,Giao lộ đường phố
+BDD07,calibration,normal,Làn đường rõ ràng
+BDD08,calibration,normal,Có dải phân cách cứng
+BDD09,calibration,normal,Làn đường đứt khúc
+BDD10,calibration,normal,Ngã tư đông đúc
+BDD11,calibration,normal,Đường phố có xe đậu
+BDD12,calibration,normal,Làn đường bị mờ vạch
+BDD13,calibration,normal,Xe phía trước che khuất mặt đường
+BDD14,blind,normal,Cao tốc vắng
+BDD15,blind,normal,Đường phố nhiều vạch kẻ
+BDD16,blind,normal,Đường nhỏ hẹp
+BDD17,blind,edge,Mưa làm mờ vạch và bóng phản chiếu
+BDD18,blind,critical,Ban đêm tối
+BDD19,blind,normal,Đường qua cầu
+BDD20,blind,edge,Đường residential hẹp
+BDD21,blind,normal,Đường rẽ nhánh
+BDD22,blind,edge,Chạng vạng ngược sáng
+BDD23,blind,critical,Đường residential có tuyết phủ
+BDD24,blind,critical,Tuyết phủ kín mép đường
+BDD25,blind,edge,Chạng vạng ánh sáng yếu
+BDD26,blind,critical,Đêm tối khó phân định mép đường
