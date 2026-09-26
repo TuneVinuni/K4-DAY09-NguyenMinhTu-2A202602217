@@ -1,6 +1,6 @@
 # Annotation guideline — Phân vùng Drivable Area
 
-**Version:** v1
+**Version:** v2
 
 Bạn chỉ cần file này và task CVAT để làm việc. Rule nào không có trong file này thì không tồn tại. Gặp tình huống file
 này không trả lời được thì làm theo mục 7, **đừng đoán ý tác giả**.

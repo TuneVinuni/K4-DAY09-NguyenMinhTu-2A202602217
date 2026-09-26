@@ -1,1 +1,16 @@
 sample_id,decision_id,expected,severity,rationale
+BDD05,d1,label=drivable_direct x1,major,Đường cao tốc xe ego đang chạy thẳng ở làn giữa
+BDD05,d2,geometry: polygon bao trùm mặt đường sau lưng xe phía trước không bị cắt rời,minor,Mặt đường bị xe trước che khuất vẫn tính là drivable theo quy tắc Continuity
+BDD10,d1,label=drivable_direct x1,major,Làn đường chính là làn xe ego đang lưu thông
+BDD10,d2,label=drivable_alternative không trùm lên các xe đỗ sát lề phải,major,Làn bên phải có xe dừng đỗ không được vẽ đè lên thân xe
+BDD15,d1,label=drivable_direct x1,major,Xe ego di chuyển thẳng trên làn chính giữa
+BDD15,d2,label=drivable_alternative x2,major,Hai làn cùng chiều bên cạnh xe ego có thể chuyển làn hợp lệ
+BDD15,d3,geometry: polygon dừng ở mép trong vạch sơn trắng phân làn không lấn vỉa hè,minor,Độ chuẩn xác hình học bám sát mép vạch kẻ đường
+BDD16,d1,label=drivable_direct x1,major,Làn xe ego đang chạy trên đường cua quẹo
+BDD16,d2,geometry: cạnh đáy polygon cắt sát viền nắp capo xe ego không đè lên xe,minor,Loại trừ phần nắp capo xe theo quy tắc Exclusion
+BDD20,d1,label=drivable_direct phủ toàn bộ lòng đường xe ego đang chạy,major,Đường có vạch tim đường rõ ràng phân chia làn đường 2 chiều
+BDD24,d1,label=drivable_direct không vẽ trùm lên các đống tuyết chất cao hai bên lề,critical,Đống tuyết chất đống ven đường là chướng ngại vật vật lý nguy hiểm polygon bắt buộc phải bo né chân đống tuyết
+BDD24,d2,geometry: polygon dừng lại tại mép chân đống tuyết và cắt sát viền nắp capo xe ego,critical,Kiểm tra nét vẽ hình học bo sát phần nhựa đường thực sự chạy được loại trừ đống tuyết và nắp capo xe
+BDD25,d1,label=drivable_direct x1,major,Làn chính diện xe ego đang di chuyển trên đại lộ một chiều ban đêm
+BDD25,d2,label=drivable_alternative x1 (chỉ làn trái),major,Chỉ chuyển được sang làn bên trái; làn bên phải đang có xe taxi di chuyển nên không được đánh alternative
+BDD25,d3,geometry: đáy polygon dừng tại mép trên nắp capo trắng và phân biệt vạch sơn thật với vệt bóng nước phản chiếu,minor,Độ chuẩn xác hình học loại trừ nắp capo và tránh vẽ méo mó theo vệt sáng phản chiếu trên mặt đường ướt
