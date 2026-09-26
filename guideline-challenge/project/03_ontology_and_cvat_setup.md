@@ -6,17 +6,32 @@ Bảng ontology là **source of truth** cho schema CVAT: `03_cvat_labels.json` p
 
 | Name | Geometry | Type (class / attribute) | Allowed values | Default | Mutable? | Rationale |
 |---|---|---|---|---|---|---|
-| `drivable_direct` | polygon | Class | - | - | - | Vùng mặt đường của làn mà ego đang đi. |
-| `drivable_alternative` | polygon | Class | - | - | - | Vùng mặt đường của các làn cùng chiều kế bên. |
-| `boundary_visibility` | | Attribute | `__undefined__`, `clear`, `occluded`, `unknown` | `__undefined__` | false | Đánh giá độ rõ ràng của mép polygon. Bắt buộc user phải chọn thay vì để mặc định. |
-| `ignore_region` | polygon | Class | - | - | - | Phủ lên các vùng dễ nhầm lẫn như lề đường, chỗ đỗ xe dọc phố, gore area. |
-| `escalate` | tag | Class | - | - | - | Đánh dấu nguyên khung hình để gọi hỗ trợ từ Spec owner. |
-| `reason` | | Attribute | text | `""` | false | Ghi chú lý do escalate để Reviewer đọc. |
+| `drivable_direct` | polygon | Class | - | - | - | Phần còn trống của làn ego, nối dài qua giao lộ, dừng tại chân xe phía trước. Planner cần tách làn hiện tại khỏi làn có thể chuyển sang. 1 polygon/ảnh |
+| `drivable_alternative` | polygon | Class | - | - | - | Phần còn trống của mỗi làn cùng chiều liền kề (kể cả làn khẩn cấp đủ 3 điều kiện ở guideline mục 5), 1 polygon/làn. Planner dùng để sinh quỹ đạo chuyển làn / tránh khẩn cấp |
+| `ignore_region` | polygon | Class | - | - | - | Vùng **trong lòng đường**, liền mặt nhựa nhưng cấm chạy: ngược chiều, làn đỗ, làn xe đạp, gạch chéo/gore. Là hard negative cho model; vùng ngoài lòng đường (vỉa hè, cỏ, lề hẹp) để trống |
+
+Không có attribute. `03_cvat_labels.json` có đúng 3 label trên, `attributes: []`.
 
 ## Class hay attribute
 
-- `drivable_direct` và `drivable_alternative` tách thành Class riêng để dễ vẽ (mỗi polygon có một loại màu khác nhau).
-- `boundary_visibility` là attribute dùng chung cho drivable area, thiết lập `__undefined__` làm mặc định để chống thiên kiến (annotator buộc phải tự chủ động suy nghĩ và chọn).
+- `drivable_direct` / `drivable_alternative` là **class**: downstream cần phân loại trực tiếp, QA rule khác nhau
+  (direct đúng 1 polygon/ảnh, alternative 1 polygon/làn).
+- `ignore_region` là **class**, không phải attribute của drivable: vùng này mang nghĩa ngược lại (cấm chạy). Nếu gộp vào
+  drivable dưới dạng attribute thì chỉ cần quên chọn attribute là tạo ra false positive critical.
+- **Bỏ attribute `boundary_visibility`** (có ở bản nháp trước): vì polygon drivable không vẽ đè lên xe (guideline mục
+  6), không còn mép nào phải suy luận qua xe, nên giá trị `occluded` không còn nghĩa. Mép mờ do thời tiết thì xử lý
+  bằng rule "co polygon vào trong" thay cho `unknown`. Bớt attribute cũng bớt một nguồn bất đồng khi calibration.
+- **Bỏ tag `escalate`:** vùng không chắc chắn thể hiện bằng việc **không có polygon drivable** (fail-safe, guideline mục
+  7). Đánh đổi: trong export không phân biệt được "annotator cố ý bỏ trống vì không chắc" với "annotator quên vẽ".
+
+## Quyết định → CVAT
+
+| Quyết định | Trong export |
+|---|---|
+| LABEL | polygon `drivable_direct` / `drivable_alternative` |
+| IGNORE | polygon `ignore_region` (trong lòng đường); ngoài lòng đường thì không có polygon |
+| UNKNOWN / không chắc | không có polygon drivable ở vùng đó |
+| Không xác định được làn ego | ảnh không có polygon drivable nào |
 
 ## CVAT
 
@@ -31,4 +46,4 @@ Một thành viên **chưa tham gia setup** mở task và trả lời: label gì
 
 - Test bởi: Member 2
 - Tool: Draw Polygon
-- Escalation: Khi gặp tuyết mù không đoán được mép đường, sẽ tag escalate thay vì tự vẽ bừa.
+- Escalation: Khi gặp tuyết mù không đoán được làn ego, không vẽ polygon drivable nào (guideline mục 7) thay vì tự vẽ bừa.
