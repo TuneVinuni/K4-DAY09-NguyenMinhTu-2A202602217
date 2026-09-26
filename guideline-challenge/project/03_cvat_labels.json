@@ -2,49 +2,16 @@
   {
     "name": "drivable_direct",
     "color": "#E53935",
-    "type": "polygon",
-    "attributes": [
-      {
-        "name": "boundary_visibility",
-        "mutable": false,
-        "input_type": "select",
-        "default_value": "__undefined__",
-        "values": ["__undefined__", "clear", "occluded", "unknown"]
-      }
-    ]
+    "type": "polygon"
   },
   {
     "name": "drivable_alternative",
     "color": "#1E88E5",
-    "type": "polygon",
-    "attributes": [
-      {
-        "name": "boundary_visibility",
-        "mutable": false,
-        "input_type": "select",
-        "default_value": "__undefined__",
-        "values": ["__undefined__", "clear", "occluded", "unknown"]
-      }
-    ]
+    "type": "polygon"
   },
   {
     "name": "ignore_region",
     "color": "#757575",
-    "type": "polygon",
-    "attributes": []
-  },
-  {
-    "name": "escalate",
-    "color": "#8E24AA",
-    "type": "tag",
-    "attributes": [
-      {
-        "name": "reason",
-        "mutable": false,
-        "input_type": "text",
-        "default_value": "",
-        "values": [""]
-      }
-    ]
+    "type": "polygon"
   }
 ]
